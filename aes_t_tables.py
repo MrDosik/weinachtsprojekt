@@ -53,9 +53,10 @@ def precompute_t_tables(t_tables):
 # roundkey[16] - Aktueller Rundenschlüssel.
 def add_roundkey(state, roundkey):
     # TODO Implementiere diese Funktion
-    print(state)
-    print(roundkey)
-    return 1 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
+    state_out = [int(bin(x ^ y), 2) for x, y in zip(state, roundkey)]
+    state.clear()
+    state += state_out
+    return 0 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
 
 
 # In dieser Funktion soll eine Runde der AES-Verschlüsselung ausgeführt werden.
