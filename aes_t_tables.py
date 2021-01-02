@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+from math import fabs
 #   Einführung in die Kryptographie 1
 #   Projekt: AES T-Tables
 #
@@ -30,6 +30,52 @@ rcon = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
 ######################################
 # code
 
+
+def multiply_pol(hex1, hex2):
+    s1 = [int(x) for x in bin(hex1)[2:]]
+    s2 = [int(x) for x in bin(hex2)[2:]]
+
+    res = [0] * (len(s1) + len(s2) - 1)
+    for o1, i1 in enumerate(s1):
+        for o2, i2 in enumerate(s2):
+            res[o1 + o2] += i1 * i2
+            if res[o1 + o2] >= 2:
+                res[o1 + o2] %= 2
+
+    return res
+
+
+def division_pol(dividend):
+    # dividend and divisor are both polynomials, which are here simply lists of coefficients. Eg: x^2 + 3x + 5 will be represented as [1, 3, 5]
+    divisor = [1,0,0,0,1,1,0,1,1]
+    out = list(dividend)  # Copy the dividend
+    normalizer = divisor[0]
+
+    for i in range(len(dividend) - (len(divisor) - 1)):
+        out[i] /= normalizer  # for general polynomial division (when polynomials are non-monic),
+        # we need to normalize by dividing the coefficient with the divisor's first coefficient
+        coef = out[i]
+        if coef != 0:  # useless to multiply if coef is 0
+            for j in range(1, len(
+                    divisor)):  # in synthetic division, we always skip the first coefficient of the divisor,
+                # because it's only used to normalize the dividend coefficients
+                out[i + j] += -divisor[j] * coef
+                if out[i + j] >= 2:
+                    out[i + j] %= 2
+
+
+    # The resulting out contains both the quotient and the remainder, the remainder being the size of the divisor (the remainder
+    # has necessarily the same degree as the divisor since it's what we couldn't divide from the dividend), so we compute the index
+    # where this separation is, and return the quotient and remainder.
+    separator = -(len(divisor) - 1)
+    result = ''.join([str(int(fabs(x))) for x in out[separator:]])
+    if len(result) - 8 < 0:
+        for i in range(8 - len(result)):
+            result = '0' + result
+
+    return result # return quotient, remainder.
+
+
 # In dieser Funktion sollen die T-Tables berechnet und anschließend über 
 # "t_tables" zurückgegeben werden. Das Ergebnis muss also in "t_tables" geschrieben
 # werden, wobei "t_tables[i]" alle 256 Werte von T_i enthält.
@@ -37,12 +83,14 @@ rcon = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
 # t_tables[4][256] - Array zum Speichern der T-Tables T_0 bis T_3.
 def precompute_t_tables(t_tables):
     # TODO Implementiere diese Funktion
-    print('\n')
-    for count in range(len(t_tables)):
-        t_tables[count] = [[hex((s*sbox[x]%255)) for s in mixColumn_tabelle[count]] for x in range(256)]
-        print(t_tables[count])
+    for index, value in enumerate(t_tables):
+        value.clear()
+        for init_value in range(256):
+            column_values_list = [str(division_pol(multiply_pol(s, sbox[init_value]))) for s in mixColumn_tabelle[index]]
+            column_values_to_int = int(''.join(column_values_list), 2)
+            value.append(column_values_to_int)
 
-    return 1  # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
+    return 0  # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
     
 
 # In dieser Funktion soll ein gegebener Rundenschlüssel "roundkey" auf den 
@@ -56,7 +104,7 @@ def add_roundkey(state, roundkey):
     state_out = [int(bin(x ^ y), 2) for x, y in zip(state, roundkey)]
     state.clear()
     state += state_out
-    return 0 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
+    return 1 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
 
 
 # In dieser Funktion soll eine Runde der AES-Verschlüsselung ausgeführt werden.
