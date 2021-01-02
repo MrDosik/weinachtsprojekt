@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from math import fabs
 #   Einführung in die Kryptographie 1
 #   Projekt: AES T-Tables
 #
@@ -68,7 +67,7 @@ def division_pol(dividend):
     # has necessarily the same degree as the divisor since it's what we couldn't divide from the dividend), so we compute the index
     # where this separation is, and return the quotient and remainder.
     separator = -(len(divisor) - 1)
-    result = ''.join([str(int(fabs(x))) for x in out[separator:]])
+    result = ''.join([str(int(abs(x))) for x in out[separator:]])
     if len(result) - 8 < 0:
         for i in range(8 - len(result)):
             result = '0' + result
