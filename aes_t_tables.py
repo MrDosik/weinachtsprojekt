@@ -55,7 +55,7 @@ def add_roundkey(state, roundkey):
     # TODO Implementiere diese Funktion
     print(state)
     print(roundkey)
-    return 0 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
+    return 1 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
 
 
 # In dieser Funktion soll eine Runde der AES-Verschlüsselung ausgeführt werden.
