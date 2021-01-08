@@ -105,7 +105,7 @@ def add_roundkey(state, roundkey):
     state += state_out
     return 1 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
 
-
+print(1)
 # In dieser Funktion soll eine Runde der AES-Verschlüsselung ausgeführt werden.
 # Dabei darf die normale AES S-Box nicht verwendet werden, stattdessen sollen 
 # bei der Berechnung die T-Tables verwendet werden.
