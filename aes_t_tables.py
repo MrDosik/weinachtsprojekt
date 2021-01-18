@@ -98,14 +98,21 @@ def precompute_t_tables(t_tables):
 # 
 # state[16] - Aktueller Zustand des AES.
 # roundkey[16] - Aktueller Rundenschlüssel.
+
+# tstate = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]  #for TEST only
+# troundkey = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]  #for TEST only
 def add_roundkey(state, roundkey):
     # TODO Implementiere diese Funktion
-    state_out = [int(bin(x ^ y), 2) for x, y in zip(state, roundkey)]
+    # state_out = [hex((int(a) ^ int(b)))[::-1].zfill(4)[::-1] for a, b in zip(state, roundkey)]
+
+    state_out = [(a ^ b) for a, b in zip(state, roundkey)]
     state.clear()
     state += state_out
     return 1 # TODO mit "return 0;" ersetzen, um die Testbench zu aktivieren
 
-print(1)
+# add_roundkey(tstate, troundkey) #for TEST only
+# print(tstate)
+
 # In dieser Funktion soll eine Runde der AES-Verschlüsselung ausgeführt werden.
 # Dabei darf die normale AES S-Box nicht verwendet werden, stattdessen sollen 
 # bei der Berechnung die T-Tables verwendet werden.
